@@ -20,14 +20,13 @@ const ForgotPassword: React.FC = () => {
     const onSubmit = async (data: { email: string }) => {
         try {
             const signInMethods = await fetchSignInMethodsForEmail(auth, data.email);
-            console.log("Sign-in methods:", signInMethods);
-
-            if (signInMethods.length === 0) {
+    
+            if (!signInMethods || signInMethods.length === 0) {
                 setError("This email is not registered. Please check and try again.");
                 setMessage("");
                 return;
             }
-
+    
             await sendPasswordResetEmail(auth, data.email);
             setMessage("A password reset link has been sent to your email.");
             setError("");
@@ -37,6 +36,7 @@ const ForgotPassword: React.FC = () => {
             setError("Failed to send reset email. Please try again.");
         }
     };
+    
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 sm:px-6 lg:px-8">

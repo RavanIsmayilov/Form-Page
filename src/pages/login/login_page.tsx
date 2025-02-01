@@ -44,23 +44,24 @@
 
     const onSubmit = async (data: FormData) => {
         try {
-        const userCredential = await signInWithEmailAndPassword(
-            auth,
-            data.email,
-            data.password
-        );
-        if (!userCredential.user.emailVerified) {
-            setError(
-            "Your email is not verified. Please check your inbox and verify your email."
-            );
-            return;
-        }
-        alert("Login successful!");
+            const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+    
+            await userCredential.user.reload(); 
+            const isEmailVerified = userCredential.user.emailVerified;
+    
+            if (!isEmailVerified) {
+                setError("Your email is not verified. Please check your inbox and verify your email.");
+                return;
+            }
+    
+            alert("Login successful!");
         } catch (error) {
-        console.error("Login error:", error);
-        setError("Invalid email or password. Please try again.");
+            console.error("Login error:", error);
+            setError("Invalid email or password. Please try again.");
         }
     };
+    
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow-lg rounded-lg flex flex-col max-w-7xl md:flex-row w-full">
