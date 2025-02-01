@@ -42,14 +42,15 @@
         resolver: yupResolver(schema),
     });
 
+
     const onSubmit = async (data: FormData) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+            
+            await userCredential.user.reload();  
+            const updatedUser = auth.currentUser;
     
-            await userCredential.user.reload(); 
-            const isEmailVerified = userCredential.user.emailVerified;
-    
-            if (!isEmailVerified) {
+            if (!updatedUser?.emailVerified) {
                 setError("Your email is not verified. Please check your inbox and verify your email.");
                 return;
             }
@@ -60,6 +61,7 @@
             setError("Invalid email or password. Please try again.");
         }
     };
+    
     
 
     return (
