@@ -32,8 +32,9 @@
         await confirmPasswordReset(auth, oobCode, password);
         setMessage("Password reset successful! Redirecting to login...");
         setTimeout(() => navigate("/"), 3000);
-        } catch (error: any) {
+        } catch (error) {
         setError("Error resetting password. Try again.");
+        console.error(error);
         }
     };
 

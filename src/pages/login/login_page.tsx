@@ -18,24 +18,26 @@
         password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
     });
 
+    interface FormData {
+        email: string;
+        password: string;
+    }
+
     const LoginPage: React.FC = () => {
         const [showPassword, setShowPassword] = useState(false);
-        const [email, setEmail] = useState("");
-        const [password, setPassword] = useState("");
         const [error, setError] = useState<string | null>(null);
 
-        // ✅ `react-hook-form` istifadə edərək form validation əlavə edirik
-        const { handleSubmit, formState: { errors } } = useForm({
+        const { register, handleSubmit, formState: { errors } } = useForm({
             resolver: yupResolver(schema),
         });
 
-        // ✅ Qeydiyyat funksiyası
-        const onSubmit = async (data: any) => {
+        const onSubmit = async (data: FormData) => {
             try {
             await loginWithEmail(data.email, data.password,);
             alert("Login successful!");
             } catch (error) {
-                setError("Invalid email or password. Please try again!", error);
+                setError("Invalid email or password. Please try again!");
+                console.error(error);
             }
         };
 
@@ -63,11 +65,10 @@
                     className="w-5 h-5 mx-2"
                     />
                     <input
+                    {...register("email")}
                     type="email"
                     placeholder="Enter your email address"
                     className="w-full p-3 focus:outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
                     <p className="text-red-500 text-sm mt-1 font-medium">{errors.email?.message}</p>
@@ -83,11 +84,10 @@
                     className="w-5 h-5 mx-2"
                     />
                     <input
+                    {...register("password")}
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     className="w-full p-3 focus:outline-none"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                     />
                     <button
                     type="button"

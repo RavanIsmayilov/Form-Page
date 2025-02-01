@@ -3,11 +3,12 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../../config/firebaseConfig"; // Firebase konfiqurasiyanı əlavə edirik
+import { auth } from "../../config/firebaseConfig"; 
 
 const schema = yup.object().shape({
     email: yup.string().email("Invalid email format").required("Email is required"),
 });
+
 
 const ForgotPassword: React.FC = () => {
     const [message, setMessage] = useState("");
@@ -22,9 +23,10 @@ const ForgotPassword: React.FC = () => {
             await sendPasswordResetEmail(auth, data.email);
             setMessage("A password reset link has been sent to your email.");
             setError("");
-        } catch (error: any) {
+        } catch (error) {
             setMessage("");
             setError("Failed to send reset email. Make sure your email is registered.");
+            console.error(error);
         }
     };
 

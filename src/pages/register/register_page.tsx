@@ -17,23 +17,28 @@
     // ✅ YUP Validation Şeması
     const schema = yup.object().shape({
         email: yup.string().email("Invalid email format").required("Email is required"),
-        username: yup.string().min(3, "Username must be at least 3 characters").max(20, "Username must be at most 20 characters").required("Username is required"),
-        password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-        confirmPassword: yup
-        .string()
-        .nullable()
-        .defined()
-        .oneOf([yup.ref("password")], "Passwords do not match")
-        .required("Confirm Password is required"),
+        username: yup.string()
+            .min(3, "Username must be at least 3 characters")
+            .max(20, "Username must be at most 20 characters")
+            .required("Username is required"),
+        password: yup.string()
+            .min(6, "Password must be at least 6 characters")
+            .required("Password is required"),
+        confirmPassword: yup.string()
+            .oneOf([yup.ref("password")], "Passwords do not match")
+            .required("Confirm Password is required"),
     });
+
+    interface FormData {
+        email: string;
+        password: string;
+        username: string; 
+        confirmPassword: string; 
+    }
 
     const RegisterPage: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -43,13 +48,14 @@
         });
 
         // ✅ Qeydiyyat funksiyası
-        const onSubmit = async (data: any) => {
+        const onSubmit = async (data: FormData) => {
             try {
                 await registerWithEmail(data.email, data.password, data.username);
                 alert("Registration successful!");
                 navigate("/");
             } catch (error) {
-                setError("Registration Error:", error);
+                console.error(error);
+                setError("Registration Error:");
             }
         };
 
@@ -84,8 +90,6 @@
                     type="email"
                     placeholder="Enter your email address"
                     className="w-full p-3 focus:outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
                     <p className="text-red-500 text-sm mt-1 font-medium">{errors.email?.message}</p>
@@ -103,8 +107,6 @@
                     type="username"
                     placeholder="Enter your User Name"
                     className="w-full p-3 focus:outline-none"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
                     />
                 </div>
                     <p className="text-red-500 text-sm mt-1 font-medium">{errors.username?.message}</p>
@@ -126,8 +128,6 @@
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     className="w-full p-3 focus:outline-none"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                     />
                     <button
                     type="button"
@@ -160,8 +160,6 @@
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     className="w-full p-3 focus:outline-none"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                     <button
                     type="button"
