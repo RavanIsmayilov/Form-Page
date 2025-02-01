@@ -25,7 +25,7 @@
         const [error, setError] = useState<string | null>(null);
 
         // ✅ `react-hook-form` istifadə edərək form validation əlavə edirik
-        const { register, handleSubmit, formState: { errors } } = useForm({
+        const { handleSubmit, formState: { errors } } = useForm({
             resolver: yupResolver(schema),
         });
 
@@ -35,7 +35,7 @@
             await loginWithEmail(data.email, data.password,);
             alert("Login successful!");
             } catch (error) {
-            console.error("Invalid email or password. Please try again!", error);
+                setError("Invalid email or password. Please try again!", error);
             }
         };
 
