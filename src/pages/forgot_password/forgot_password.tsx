@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { sendPasswordResetEmail, fetchSignInMethodsForEmail } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../config/firebaseConfig"; 
 
 const schema = yup.object().shape({
@@ -19,15 +19,9 @@ const ForgotPassword: React.FC = () => {
 
     const onSubmit = async (data: { email: string }) => {
         try {
-            const signInMethods = await fetchSignInMethodsForEmail(auth, data.email);
-    
-            if (!signInMethods || signInMethods.length === 0) {
-                setError("This email is not registered. Please check and try again.");
-                setMessage("");
-                return;
-            }
-    
-            await sendPasswordResetEmail(auth, data.email);
+            await sendPasswordResetEmail(auth, data.email, {
+                url: "https://form-page-xi.vercel.app/reset-password",
+            });
             setMessage("A password reset link has been sent to your email.");
             setError("");
         } catch (error) {

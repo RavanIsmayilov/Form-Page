@@ -1,48 +1,44 @@
     import React, { useState } from "react";
-    import { useLocation, useNavigate } from "react-router-dom";
-    import { confirmPasswordReset } from "firebase/auth";
-    import { auth } from "../../config/firebaseConfig";
+    import { useNavigate, useSearchParams } from "react-router-dom";
+    import { confirmPasswordReset, getAuth } from "firebase/auth";
 
     const ResetPassword: React.FC = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
-
-    const location = useLocation();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
-    const queryParams = new URLSearchParams(location.search);
-    const oobCode = queryParams.get("oobCode");
+    const oobCode = searchParams.get("oobCode");
+    const auth = getAuth();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!oobCode) {
-        setError("Invalid or expired reset link.");
-        return;
-        }
-
-        if (password !== confirmPassword) {
-        setError("Passwords do not match.");
-        return;
+            setError("Invalid reset link.");
+            return;
         }
 
         try {
-        await confirmPasswordReset(auth, oobCode, password);
-        setMessage("Password reset successful! Redirecting to login...");
-        setTimeout(() => navigate("/"), 3000);
+            await confirmPasswordReset(auth, oobCode, password);
+            setMessage("Your password has been successfully reset.");
+            setError("");
+            setTimeout(() => {
+                navigate("/login");
+            }, 3000);
         } catch (error) {
-        setError("Error resetting password. Try again.");
-        console.error(error);
+            console.error("Reset Password Error:", error);
+            setMessage("");
+            setError("Failed to reset password. Please try again.");
         }
     };
-
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
         <div className="bg-white p-6 py-12 rounded-lg shadow-lg max-w-[550px] w-full">
             <h1 className="text-2xl font-bold mb-4">Reset Your Password</h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleResetPassword} className="space-y-4">
             <div className="flex items-center border-b-2 border-gray-300 focus-within:border-[#000842]">
                 <input
                 type="password"

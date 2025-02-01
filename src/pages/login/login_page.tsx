@@ -49,6 +49,9 @@
             
             await userCredential.user.reload();  
             const updatedUser = auth.currentUser;
+
+            console.log(updatedUser);
+            
     
             if (!updatedUser?.emailVerified) {
                 setError("Your email is not verified. Please check your inbox and verify your email.");
