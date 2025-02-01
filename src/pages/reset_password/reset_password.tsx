@@ -26,7 +26,7 @@
             setMessage("Your password has been successfully reset.");
             setError("");
             setTimeout(() => {
-                navigate("/login");
+                navigate("/");
             }, 3000);
         } catch (error) {
             console.error("Reset Password Error:", error);

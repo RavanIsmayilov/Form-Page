@@ -20,7 +20,7 @@ const ForgotPassword: React.FC = () => {
     const onSubmit = async (data: { email: string }) => {
         try {
             await sendPasswordResetEmail(auth, data.email, {
-                url: "https://form-page-xi.vercel.app/reset-password",
+                url: "https://form-page-xi.vercel.app/resetpassword",
             });
             setMessage("A password reset link has been sent to your email.");
             setError("");
