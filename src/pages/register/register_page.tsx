@@ -1,5 +1,4 @@
     import React, { useState } from "react";
-    import { registerWithEmail } from "../../services/authService";
     import { Link, useNavigate } from "react-router-dom";
     import { useForm } from "react-hook-form";
     import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,6 +12,8 @@
     import RightSide from "../../assets/Saly-10.svg";
     import ShowEye from "../../assets/eye-show.svg";
     import HideEye from "../../assets/eye-hide.svg";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { auth } from "../../config/firebaseConfig";
 
     // ✅ YUP Validation Şeması
     const schema = yup.object().shape({
@@ -42,20 +43,23 @@
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-  // ✅ `react-hook-form` istifadə edərək form validation əlavə edirik
         const { register, handleSubmit, formState: { errors } } = useForm({
             resolver: yupResolver(schema),
         });
 
-        // ✅ Qeydiyyat funksiyası
         const onSubmit = async (data: FormData) => {
             try {
-                await registerWithEmail(data.email, data.password, data.username);
-                alert("Registration successful!");
+                const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+                
+                if (userCredential.user) {
+                    await sendEmailVerification(userCredential.user);
+                    alert("Registration successful! A verification email has been sent. Please verify your email before logging in.");
+                }
                 navigate("/");
+        
             } catch (error) {
-                console.error(error);
-                setError("Registration Error:");
+                console.error("Registration error:", error);
+                setError("Registration failed. Please try again.");
             }
         };
 

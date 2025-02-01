@@ -20,6 +20,7 @@ const ForgotPassword: React.FC = () => {
     const onSubmit = async (data: { email: string }) => {
         try {
             const signInMethods = await fetchSignInMethodsForEmail(auth, data.email);
+            console.log("Sign-in methods:", signInMethods);
 
             if (signInMethods.length === 0) {
                 setError("This email is not registered. Please check and try again.");
